@@ -11,7 +11,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-public class PaymentService {
+abstract class PaymentService {
 
     public Payment prepare(final Long orderId, final String currency, final BigDecimal foreignCurrencyAmount) throws IOException {
         BigDecimal exRate = getExRate(currency);
@@ -26,25 +26,10 @@ public class PaymentService {
                 validUntil);
     }
 
-    private BigDecimal getExRate(final String currency) throws IOException {
-        URL url = new URL("https://open.er-api.com/v6/latest/" + currency);
-
-        /**
-         * HttpURLConnection이라는 서브 클래스로 캐스팅해야, 추가적인 http 기능을 사용 할 수 있다.
-         */
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String response = br.lines().collect(Collectors.joining());
-        br.close();
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExRateDate data = mapper.readValue(response, ExRateDate.class);
-        BigDecimal exRate = data.rates().get("KRW");
-        return exRate;
-    }
+    abstract BigDecimal getExRate(final String currency) throws IOException;
 
     public static void main(String[] args) throws IOException {
-        PaymentService paymentService = new PaymentService();
+        PaymentService paymentService = new WebApiExRatePaymentService();
         Payment payment = paymentService.prepare(100L, "USD", BigDecimal.valueOf(50.7));
 
         System.out.println(payment);
