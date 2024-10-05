@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PaymentService {
-    private final WebApiExRateProvider exRateProvider;
+    private final ExRateProvider exRateProvider;
 
     // prepare 메소드를 여러본 호출해도 매번 WebApiExRateProvider 클래스를 계속 호출 하지 않아도 됨
     public PaymentService() {
@@ -13,7 +13,7 @@ public class PaymentService {
     }
 
     public Payment prepare(final Long orderId, final String currency, final BigDecimal foreignCurrencyAmount) throws IOException {
-        BigDecimal exRate = exRateProvider.getWebExRate(currency);
+        BigDecimal exRate = exRateProvider.getExRate(currency);
 
         // todo : 금액 계산
         BigDecimal convertedAmount = foreignCurrencyAmount.multiply(exRate);
