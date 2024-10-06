@@ -8,8 +8,13 @@ public class PaymentService {
     private final ExRateProvider exRateProvider;
 
     // prepare 메소드를 여러본 호출해도 매번 WebApiExRateProvider 클래스를 계속 호출 하지 않아도 됨
-    public PaymentService() {
-        this.exRateProvider = new WebApiExRateProvider();
+    public PaymentService(ExRateProvider exRateProvider) {
+
+        this.exRateProvider = exRateProvider;
+        /**
+         *  역할에 대한 책임을 PaymentService가 갖지 않음
+         this.exRateProvider = new WebApiExRateProvider();
+         **/
     }
 
     public Payment prepare(final Long orderId, final String currency, final BigDecimal foreignCurrencyAmount) throws IOException {
