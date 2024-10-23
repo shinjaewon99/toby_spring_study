@@ -1,25 +1,51 @@
 package com.example.toby_spring.payment;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PaymentServiceTest {
+    Clock clock;
+
+    @BeforeEach
+    void beforeEach() {
+        this.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    }
 
     @Test
     void prepare() throws IOException {
-        testAmount(valueOf(500), valueOf(5_000));
-        testAmount(valueOf(1000), valueOf(10_000));
+
+        testAmount(valueOf(500), valueOf(5_000), this.clock);
+        testAmount(valueOf(1000), valueOf(10_000), this.clock);
         // 원화 환산금액의 유효 시간
         // assertThat(payment.getValidUntil()).isAfter(LocalDateTime.now());
     }
 
-    private static void testAmount(final BigDecimal exRate, final BigDecimal convertedAmount) throws IOException {
-        PaymentService paymentService = new PaymentService(new ExRateProviderStub(exRate));
+    @Test
+    void validUntil() throws IOException {
+        PaymentService paymentService = new PaymentService(new ExRateProviderStub(valueOf(1000)), clock);
+
+        Payment payment = paymentService.prepare(1L, "USD", TEN);
+
+        // valid until이 prepare() 30분 뒤로 설정 됐는가?
+        LocalDateTime now = LocalDateTime.now(this.clock);
+        LocalDateTime expectedValidUntil = now.plusMinutes(30);
+
+        assertThat(payment.getValidUntil()).isEqualTo(expectedValidUntil);
+    }
+
+    private static void testAmount(final BigDecimal exRate, final BigDecimal convertedAmount, final Clock clock) throws IOException {
+        PaymentService paymentService = new PaymentService(new ExRateProviderStub(exRate), clock);
 
         Payment payment = paymentService.prepare(1L, "USD", TEN);
 
