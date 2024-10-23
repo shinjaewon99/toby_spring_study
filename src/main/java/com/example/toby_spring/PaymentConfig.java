@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Clock;
+
 @Configuration
 @ComponentScan
-public class ObjectFactory {
+public class PaymentConfig {
     @Bean
     public PaymentService paymentService() {
-        return new PaymentService(cachedExRateProvider());
+        return new PaymentService(cachedExRateProvider(), clock());
     }
 
     @Bean
@@ -24,5 +26,10 @@ public class ObjectFactory {
     @Bean
     public ExRateProvider cachedExRateProvider() {
         return new CachedExRateProvider(exRateProvider());
+    }
+
+    @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
     }
 }
