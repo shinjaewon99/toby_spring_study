@@ -1,6 +1,7 @@
 package com.example.toby_spring.payment;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 public class Payment {
@@ -19,6 +20,22 @@ public class Payment {
         this.exRate = exRate;
         this.convertedAmount = convertedAmount;
         this.validUntil = validUntil;
+    }
+
+    public static Payment createPrepared(final Long orderId, final String currency, final BigDecimal foreignCurrencyAmount,
+                                         final BigDecimal exRate, LocalDateTime now) {
+
+        // todo : 금액 계산
+        BigDecimal convertedAmount = foreignCurrencyAmount.multiply(exRate);
+
+        // todo : 유효시간 계산
+        LocalDateTime validUntil = now.plusMinutes(30);
+
+        return new Payment(orderId, currency, foreignCurrencyAmount, exRate, convertedAmount, validUntil);
+    }
+
+    public boolean isValid(final Clock clock) {
+        return LocalDateTime.now(clock).isBefore(this.validUntil);
     }
 
     public Long getOrderId() {
