@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
         // 구현한 ObjectFactory 클래스의 구성정보를 참고하여 사용
         BeanFactory beanFactory = new AnnotationConfigApplicationContext(PaymentConfig.class);
 
