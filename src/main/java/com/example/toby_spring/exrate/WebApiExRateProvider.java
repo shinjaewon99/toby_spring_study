@@ -29,22 +29,32 @@ public class WebApiExRateProvider implements ExRateProvider {
 
         final String response;
         try {
-            HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
-
-            // auto close
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                response = br.lines().collect(Collectors.joining());
-            }
+            response = executeApi(uri);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            ExRateDate data = mapper.readValue(response, ExRateDate.class);
-            return data.rates().get("KRW");
+            return parseExRate(response);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static BigDecimal parseExRate(final String response) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ExRateDate data = mapper.readValue(response, ExRateDate.class);
+        return data.rates().get("KRW");
+    }
+
+    private static String executeApi(final URI uri) throws IOException {
+        final String response;
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+
+        // auto close
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            response = br.lines().collect(Collectors.joining());
+        }
+        return response;
     }
 }
