@@ -1,26 +1,23 @@
 package com.example.toby_spring.exrate;
 
+import com.example.toby_spring.api.ApiExecutor;
 import com.example.toby_spring.api.SimpleApiExecutor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.stream.Collectors;
 
 public class WebApiExRateProvider implements ExRateProvider {
     @Override
     public BigDecimal getExRate(final String currency) {
         final String url = "https://open.er-api.com/v6/latest/" + currency;
-        return runApiForExRate(url);
+        return runApiForExRate(url, new SimpleApiExecutor());
     }
 
-    private static BigDecimal runApiForExRate(final String url) {
+    private static BigDecimal runApiForExRate(final String url, final ApiExecutor apiExecutor) {
         URI uri;
         try {
             uri = new URI(url);
@@ -34,7 +31,7 @@ public class WebApiExRateProvider implements ExRateProvider {
 
         final String response;
         try {
-            response = new SimpleApiExecutor().execute(uri);
+            response = apiExecutor.execute(uri);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
