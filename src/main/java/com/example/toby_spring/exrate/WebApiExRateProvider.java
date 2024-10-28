@@ -7,13 +7,17 @@ import com.example.toby_spring.api.HttpClientExecutor;
 import java.math.BigDecimal;
 
 public class WebApiExRateProvider implements ExRateProvider {
-    ApiTemplate apiTemplate = new ApiTemplate();
+    private final ApiTemplate apiTemplate;
+
+    public WebApiExRateProvider(final ApiTemplate apiTemplate) {
+        this.apiTemplate = apiTemplate;
+    }
 
     @Override
     public BigDecimal getExRate(final String currency) {
         final String url = "https://open.er-api.com/v6/latest/" + currency;
 
-        return apiTemplate.getExRate(url, new HttpClientExecutor(), new ErApiExRateExtractor());
+        return apiTemplate.getForExRate(url, new HttpClientExecutor(), new ErApiExRateExtractor());
 
         // 아래 처럼 람다로 구현 해도 됨
         /**
