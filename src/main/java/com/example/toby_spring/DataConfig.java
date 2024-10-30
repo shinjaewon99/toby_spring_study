@@ -1,5 +1,7 @@
 package com.example.toby_spring;
 
+import com.example.toby_spring.data.OrderRepository;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -26,12 +28,17 @@ public class DataConfig {
         emf.setDataSource(dataSource());
         emf.setPackagesToScan("toby_spring.toby_spring");
 
-        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter(){{
+        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter() {{
             setDatabase(Database.H2);
             setGenerateDdl(true);
             setShowSql(true);
         }});
 
         return emf;
+    }
+
+    @Bean
+    public OrderRepository orderRepository(EntityManagerFactory emf) {
+        return new OrderRepository(emf);
     }
 }
