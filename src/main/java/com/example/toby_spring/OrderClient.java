@@ -10,7 +10,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 
-public class DataClient {
+public class OrderClient {
 
     public static void main(String[] args) {
         BeanFactory beanFactory = new AnnotationConfigApplicationContext(DataConfig.class);
