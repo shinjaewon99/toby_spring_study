@@ -1,6 +1,6 @@
 package com.example.toby_spring;
 
-import com.example.toby_spring.data.OrderRepository;
+import com.example.toby_spring.data.JpaOrderRepository;
 import com.example.toby_spring.order.Order;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -14,7 +14,7 @@ public class OrderClient {
 
     public static void main(String[] args) {
         BeanFactory beanFactory = new AnnotationConfigApplicationContext(DataConfig.class);
-        OrderRepository repository = beanFactory.getBean(OrderRepository.class);
+        JpaOrderRepository repository = beanFactory.getBean(JpaOrderRepository.class);
         JpaTransactionManager transactionManager = beanFactory.getBean(JpaTransactionManager.class);
         try {
             new TransactionTemplate(transactionManager).execute(status -> {
