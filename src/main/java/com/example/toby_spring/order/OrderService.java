@@ -1,11 +1,11 @@
 package com.example.toby_spring.order;
 
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -27,5 +27,12 @@ public class OrderService {
             return order;
 
         });
+    }
+
+    public List<Order> createOrders(List<OrderReq> reqs) {
+        // 하나의 트랜잭션으로 묶임
+        return new TransactionTemplate(transactionManager)
+                .execute(status -> reqs.stream().map(req ->
+                createOrder(req.no(), req.total())).toList());
     }
 }
