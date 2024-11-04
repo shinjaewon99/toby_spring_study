@@ -3,6 +3,8 @@ package com.example.toby_spring;
 import com.example.toby_spring.data.JdbcOrderRepository;
 import com.example.toby_spring.order.OrderRepository;
 import com.example.toby_spring.order.OrderService;
+import com.example.toby_spring.order.OrderServiceImpl;
+import com.example.toby_spring.order.OrderServiceTxProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -17,7 +19,7 @@ public class OrderConfig {
     public OrderService orderService(
             OrderRepository orderRepository,
             JpaTransactionManager transactionManager) {
-        return new OrderService(orderRepository, transactionManager);
+        return new OrderServiceTxProxy(new OrderServiceImpl(orderRepository), transactionManager);
     }
 
     @Bean
