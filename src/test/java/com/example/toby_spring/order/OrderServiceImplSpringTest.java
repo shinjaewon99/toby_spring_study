@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = OrderConfig.class)
-public class OrderServiceSpringTest {
+public class OrderServiceImplSpringTest {
 
     @Autowired
     OrderService orderService;
